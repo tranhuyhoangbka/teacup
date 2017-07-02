@@ -9,7 +9,7 @@ set :application, 'teacup'
 set :repo_url, 'git@github.com:tranhuyhoangbka/teacup.git'
 set :ssh_options, { forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/id_rsa.pub) }
 
-set :pty, true
+set :pty, false
 set :use_sudo , false
 set :stage, :production
 set :deploy_via, :remote_cache
