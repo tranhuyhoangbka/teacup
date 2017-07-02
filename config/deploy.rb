@@ -37,18 +37,11 @@ set :sidekiq_log, File.join(shared_path, 'log', 'sidekiq.log')
 set :sidekiq_options, nil
 set :sidekiq_require, nil
 set :sidekiq_tag, nil
-set :sidekiq_config, nil # if you have a config/sidekiq.yml, do not forget to set this. 
-set :sidekiq_queue, nil
 set :sidekiq_timeout, 10
 set :sidekiq_role, :app
 set :sidekiq_processes, 1
 set :sidekiq_options_per_process, nil
 set :sidekiq_concurrency, 10
-# set :sidekiq_monit_templates_path, 'config/deploy/templates'
-# set :sidekiq_monit_conf_dir => '/etc/monit/conf.d'
-# :sidekiq_monit_use_sudo => true
-# :monit_bin => '/usr/bin/monit'
-# :sidekiq_monit_default_hooks => true
 set :sidekiq_service_name, "sidekiq_#{fetch(:application)}_#{fetch(:sidekiq_env)}"
 
 set :scm, :git
