@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   authenticate :admin do
     mount Sidekiq::Web => '/admin/sidekiq'
   end
+  scope defaults: (Rails.env.production? ? { protocol: 'https' } : {}) do
+    devise_for :admins, skip: [:sessions]
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get '/home' => "pages#home"
   root to: "pages#home"
@@ -34,7 +37,9 @@ Rails.application.routes.draw do
 
     unauthenticated do
       devise_scope :admin do
-        root to: "admin/sessions#new", as: :unauthenticated
+        scope defaults: (Rails.env.production? ? { protocol: 'https' } : {}) do
+          root to: "admin/sessions#new", as: :unauthenticated
+        end
       end
     end
   end
