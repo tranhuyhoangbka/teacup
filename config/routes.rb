@@ -1,6 +1,8 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
-  scope defaults: (Rails.env.production? ? { protocol: 'https' } : {}) do
-    devise_for :admins, skip: [:sessions]
+  authenticate :admin do
+    mount Sidekiq::Web => '/admin/sidekiq'
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get '/home' => "pages#home"
@@ -25,7 +27,9 @@ Rails.application.routes.draw do
 
   scope :admin, as: :admin do
     authenticated do
-      root to: "admin/top_page#show", as: :root
+      scope defaults: (Rails.env.production? ? { protocol: 'https' } : {}) do
+        root to: "admin/top_page#show", as: :root
+      end
     end
 
     unauthenticated do
