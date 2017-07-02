@@ -1,0 +1,6 @@
+<%= form_for [:admin, @user] do |f| %>
+  <div>Email: <%= f.email_field :email %></div>
+  <div>password: <%= f.password_field :password %></div>
+  <div>Email: <%= f.password_field :password_confirmation %></div>
+  <div><%= f.submit %></div>
+<% end %>

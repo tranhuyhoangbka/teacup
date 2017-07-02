@@ -1,6 +1,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  devise_for :users
   authenticate :admin do
     mount Sidekiq::Web => '/admin/sidekiq'
   end
@@ -20,6 +21,7 @@ Rails.application.routes.draw do
   end
   namespace :admin do
     resources :posts
+    resources :users
   end
 
   # authenticate :admin do

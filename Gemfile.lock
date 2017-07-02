@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/sinatra/sinatra.git
+  revision: a58834812b455101111ef332c7510bc9083c30d0
+  specs:
+    rack-protection (2.0.0)
+      rack
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -142,8 +149,6 @@ GEM
     public_suffix (2.0.5)
     puma (3.9.1)
     rack (2.0.3)
-    rack-protection (2.0.0)
-      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.1.2)
@@ -269,6 +274,7 @@ DEPENDENCIES
   mysql2 (>= 0.3.18, < 0.5)
   pry-rails
   puma (~> 3.7)
+  rack-protection!
   rails (~> 5.1.1)
   redis-rails
   sass-rails (~> 5.0)

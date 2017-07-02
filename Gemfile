@@ -38,6 +38,10 @@ gem 'sidekiq'
 # Redis
 gem "redis-rails"
 
+github 'sinatra/sinatra' do
+  gem 'rack-protection'
+end
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   # Adds support for Capybara system testing and selenium driver
