@@ -4,4 +4,9 @@ h1{
 
 body {
   background-color: gray;
+  .texty {
+    width: 500px;
+    height: 500px;
+    background: image-url('h2.jpg') top left no-repeat;
+  }
 }
