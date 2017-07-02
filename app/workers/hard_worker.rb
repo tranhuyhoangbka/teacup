@@ -2,6 +2,7 @@ class HardWorker
   include Sidekiq::Worker
 
   def perform
-    puts "#{Time.now}"
+    admin = Admin.first
+    admin.posts.create title: "new post", content: "description"
   end
 end
