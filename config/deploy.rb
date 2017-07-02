@@ -28,7 +28,7 @@ set :puma_access_log, "#{release_path}/log/puma.access.log"
 set :puma_error_log, "#{release_path}/log/puma.error.log"
 set :puma_env, fetch(:rack_env, fetch(:rails_env, 'production'))
 set :puma_bind, "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
-set :nginx_use_ssl, false
+set :nginx_use_ssl, true
 
 set :scm, :git
 set :branch, :master
