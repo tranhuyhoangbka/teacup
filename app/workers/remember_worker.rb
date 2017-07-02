@@ -1,4 +1,4 @@
-class Remember
+class RememberWorker
   include Sidekiq::Worker
 
   def perform
