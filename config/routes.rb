@@ -4,9 +4,9 @@ Rails.application.routes.draw do
   get '/home' => "pages#home"
   root to: "pages#home"
   devise_scope :admin do
-    get "/admin/login" => "admin/sessions#new", as: :admin_session
-    post "/admin/login" => "admin/sessions#create", as: :admin_login
-    get "/admin/logout" => "admin/sessions#destroy", as: :admin_logout
+    get "/admin/login" => "admin/sessions#new", defaults: (Rails.env.production? ? { protocol: 'https' } : {}), as: :admin_session
+    post "/admin/login" => "admin/sessions#create", defaults: (Rails.env.production? ? { protocol: 'https' } : {}), as: :admin_login
+    get "/admin/logout" => "admin/sessions#destroy", defaults: (Rails.env.production? ? { protocol: 'https' } : {}),  as: :admin_logout
   end
   namespace :admin do
     resources :posts
