@@ -3,10 +3,90 @@ h1{
 }
 
 body {
-  background-color: gray;
+  background-color: red;
   .texty {
     width: 500px;
     height: 500px;
     background: image-url('h2.jpg') top left no-repeat;
   }
+}
+
+$icon-size: 29px;
+$alert-notice-bg: #36c6d3;
+$dark-blue: #226167;
+$light-blue: #3598dc;
+$lighest-blue: #5faee4;
+$white: #ffffff;
+$light-pink: #f2dede;
+$strong-pink: #ebccd1;
+$red: #a94442;
+$light-red: #e73d4a;
+$gray: #cecbcb;
+$lightest-gray: #fafafa;
+$emerald-green: #5cb85c;
+$font-green: #3bd48f;
+$light-green: #3ddb94;
+$light-gray: #ededed;
+$border-gray: #cecccc;
+$dark-gray: #8c8b8b;
+$gray-white: #f4f4f4;
+$common-font-color: #333333;
+$opalescent: #f2f2f2;
+$black: #090909;
+$most-black: #121212;
+$font-color: #555;
+
+
+$btn-primary: #3CDC96;
+
+.alert-notice {
+  background: $alert-notice-bg;
+  font-weight: bold;
+  color: $white;
+}
+
+.vertical-middle {
+  vertical-align: middle !important;
+}
+
+.alert {
+  .close {
+    color: $dark-blue;
+    text-indent: 0px;
+  }
+  &.alert-alert {
+    color: $red;
+    background-color: $light-pink;
+    border-color: $strong-pink;
+  }
+  text-align: center;
+  font-weight: bold;
+  &.error-container {
+    text-align: left;
+  }
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  display: inline-block;
+}
+
+@mixin border-radius($radius: 0px) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+          border-radius: $radius;
+}
+
+@mixin inline-block() {
+  *display: inline-block;
+  display: inline-block;
+  zoom: 1;
+}
+
+img {
+  width: 230px;
+  height: 270px;
 }
