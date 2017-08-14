@@ -15,3 +15,8 @@
 //= require turbolinks
 //= require bootstrap-sprockets
 //= require_tree .
+$(document).ready(function() {
+  $('.show-alert').on('click', function() {
+    alert('ok men');
+  })
+});
