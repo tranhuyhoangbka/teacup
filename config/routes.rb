@@ -1,8 +1,11 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
   resources :messages
-  devise_for :users, skip: [:sessions]
+  scope defaults: (Rails.env.production? ? { protocol: 'https' } : {}) do
+    devise_for :users, skip: [:sessions]
+  end
 
   scope defaults: (Rails.env.production? ? { protocol: 'https' } : {}) do
     devise_scope :user do
