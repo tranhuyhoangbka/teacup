@@ -1,83 +1,117 @@
-# config valid only for current version of Capistrano
-lock  '3.8.2'
-
-server '54.70.123.166', roles: [:web, :app, :db], primary: true
-
-set :user, 'deploy'
-set :local_user, 'deploy'
+lock  '3.9.1'
 set :application, 'teacup'
+set :deploy_user, 'deploy'
+set :local_user, 'deploy'
+set :user, 'deploy'
+
+# setup repo details
+set :scm, :git
 set :repo_url, 'git@github.com:tranhuyhoangbka/teacup.git'
-set :ssh_options, { forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/id_rsa.pub) }
+
+# setup rbenv.
+# set :rbenv_type, :system
+# set :rbenv_ruby, '2.1.1'
+# set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
+# set :rbenv_map_bins, %w{rake gem bundle ruby rails}
+
+# setup rvm
+set :rvm_ruby_version, '2.4.0'
+
+# how many old releases do we want to keep, not much
+set :keep_releases, 2
+
+# files we want symlinking to specific entries in shared
+set :linked_files, %w{config/database.yml config/secrets.yml .env}
+
+# dirs we want symlinking to shared
+set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+
+# what specs should be run before deployment is allowed to
+# continue, see lib/capistrano/tasks/run_tests.cap
+set :tests, []
 
 set :pty, false
-set :use_sudo , false
-set :stage, :production
-set :deploy_via, :remote_cache
-set :deploy_to, "/home/#{fetch(:user)}/#{fetch(:application)}"
-set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
-set :rvm_ruby, '2.4.0'
 
-set :puma_role, :app
-set :puma_workers, 2
-set :puma_threads, [4, 16]
-set :puma_preload_app, true
-set :puma_worker_timeout, nil
-set :puma_init_active_record, true
-set :puma_pid, "#{shared_path}/tmp/pids/puma.pid"
-set :puma_state, "#{shared_path}/tmp/pids/puma.state"
-set :puma_access_log, "#{release_path}/log/puma.access.log"
-set :puma_error_log, "#{release_path}/log/puma.error.log"
-set :puma_env, fetch(:rack_env, fetch(:rails_env, 'production'))
-set :puma_bind, "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
-set :nginx_use_ssl, true
+set :sidekiq_pid, "#{current_path}/tmp/pids/sidekiq.pid"
 
-set :scm, :git
-set :branch, :master
-set :format, :pretty
-set :log_level, :debug
-set :keep_releases, 5
+# which config files should be copied by deploy:setup_config
+# see documentation in lib/capistrano/tasks/setup_config.cap
+# for details of operations
+set(:config_files, %w(
+  nginx.conf
+  secrets.example.yml
+  database.example.yml
+  log_rotation
+  monit
+  unicorn.rb
+  unicorn_init.sh
+  sidekiq_init.sh
+))
 
-namespace :puma do
-  desc 'Create Directories for Puma Pids and Socket'
-  task :make_dirs do
-    on roles(:app) do
-      execute "mkdir -p #{shared_path}/tmp/pids"
-      execute "mkdir -p #{shared_path}/tmp/sockets"
-    end
-  end
+# which config files should be made executable after copying
+# by deploy:setup_config
+set(:executable_config_files, %w(
+  unicorn_init.sh
+  sidekiq_init.sh
+))
 
-  before :start, :make_dirs
-end
+
+# files which need to be symlinked to other parts of the
+# filesystem. For example nginx virtualhosts, log rotation
+# init scripts etc. The full_app_name variable isn't
+# available at this point so we use a custom template {{}}
+# tag and then add it at run time.
+set(:symlinks, [
+  {
+    source: "nginx.conf",
+    link: "/etc/nginx/sites-enabled/{{full_app_name}}"
+  },
+  {
+    source: "unicorn_init.sh",
+    link: "/etc/init.d/unicorn_{{full_app_name}}"
+  },
+  {
+    source: "log_rotation",
+   link: "/etc/logrotate.d/{{full_app_name}}"
+  },
+  {
+    source: "monit",
+    link: "/etc/monit/conf.d/{{full_app_name}}.conf"
+  },
+  {
+    source: "sidekiq_init.sh",
+    link: "/etc/init.d/sidekiq_{{full_app_name}}"
+  },
+])
+
+# this:
+# http://www.capistranorb.com/documentation/getting-started/flow/
+# is worth reading for a quick overview of what tasks are called
+# and when for `cap stage deploy`
 
 namespace :deploy do
-  desc 'Make sure local git is in sync with remote'
-  task :check_revision do
-    on roles(:app) do
-      unless `git rev-parse HEAD` == `git rev-parse origin/master`
-        puts 'WARNING: HEAD is not the same as origin/master'
-        puts 'Run `git push` to sync changes.'
-        exit
-      end
-    end
-  end
-
-  desc 'Initial Deploy'
-  task :initial do
-    on roles(:app) do
-      before 'deploy:restart', 'puma:start'
-      invoke 'deploy'
-    end
-  end
-
-  desc 'Restart Application'
-  task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      invoke 'puma:restart'
-    end
-  end
-
-  before :starting, :check_revision
+  # make sure we're deploying what we think we're deploying
+  before :deploy, "deploy:check_revision"
+  # only allow a deploy with passing tests to deployed
+  before :deploy, "deploy:run_tests"
+  # compile assets locally then rsync
   after 'deploy:symlink:shared', 'deploy:compile_assets_locally'
-  after :finishing, :cleanup
-  after :finishing, :restart
+  after :finishing, 'deploy:cleanup'
+
+  # remove the default nginx configuration as it will tend
+  # to conflict with our configs.
+  before 'deploy:setup_config', 'nginx:remove_default_vhost'
+
+  # reload nginx to it will pick up any modified vhosts from
+  # setup_config
+  after 'deploy:setup_config', 'nginx:reload'
+
+  # Restart monit so it will pick up any monit configurations
+  # we've added
+  after 'deploy:setup_config', 'monit:restart'
+
+  # As of Capistrano 3.1, the `deploy:restart` task is not called
+  # automatically.
+  after 'deploy:publishing', 'deploy:restart'
 end
+

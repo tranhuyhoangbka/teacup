@@ -12,7 +12,6 @@ gem "bootstrap-sass"
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.3.18', '< 0.5'
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -38,27 +37,16 @@ gem 'sidekiq'
 # Redis
 gem "redis-rails"
 
-github 'sinatra/sinatra' do
-  gem 'rack-protection'
-end
-
-group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 2.13'
-  gem 'selenium-webdriver'
-end
+gem 'unicorn', '~> 4.8.3'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console', '>= 3.3.0'  
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
   gem "capistrano",         require: false
   gem "capistrano-rvm",     require: false
   gem "capistrano-rails",   require: false
   gem "capistrano-bundler", require: false
-  gem "capistrano3-puma",   require: false
+  gem 'capistrano-cookbook', require: false
   gem 'capistrano-sidekiq'
 end
