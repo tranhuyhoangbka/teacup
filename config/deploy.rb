@@ -43,6 +43,7 @@ set(:config_files, %w(
   database.example.yml
   log_rotation
   monit
+  monit-upstart.conf
   unicorn.rb
   unicorn_init.sh
   sidekiq_init.sh
@@ -79,6 +80,10 @@ set(:symlinks, [
     link: "/etc/monit/conf.d/{{full_app_name}}.conf"
   },
   {
+    source: "monit-upstart.conf",
+    link: "/etc/init/monit.conf"
+  },
+  {
     source: "sidekiq_init.sh",
     link: "/etc/init.d/sidekiq_{{full_app_name}}"
   },
@@ -105,6 +110,9 @@ namespace :deploy do
   # reload nginx to it will pick up any modified vhosts from
   # setup_config
   after 'deploy:setup_config', 'nginx:reload'
+
+  # reload initclt configuration after add monit upstart file
+  after 'deploy:setup_config', 'ctl:reload'
 
   # Restart monit so it will pick up any monit configurations
   # we've added

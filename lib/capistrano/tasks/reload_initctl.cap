@@ -1,0 +1,8 @@
+namespace :ctl do
+  desc "reload initctl after add monit upstart file"
+  task "reload" do
+    on roles(:app), in: :sequence, wait: 5 do
+      sudo "initctl reload-configuration"
+    end
+  end  
+end
