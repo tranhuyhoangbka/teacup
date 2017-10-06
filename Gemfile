@@ -41,6 +41,10 @@ gem 'unicorn', '~> 4.8.3'
 
 gem 'dotenv-rails'
 
+gem "config"
+
+gem 'aws-sdk', '~> 2'
+
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console', '>= 3.3.0'  

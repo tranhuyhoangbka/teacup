@@ -1,6 +1,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  resources :posts
   #mount ActionCable.server => '/cable'
   resources :messages
   

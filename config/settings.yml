@@ -1,0 +1,16 @@
+regex:
+  japanese_character: !ruby/regexp /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B/
+  japanese_sentence: !ruby/regexp /^([\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B|\s)+$/
+  japanese_speacial_char: !ruby/regexp /^([\u3000-\u303F]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B)+$/
+  english: !ruby/regexp /^(\w|\d|\s)+$/
+voice_type:
+  english: "Joanna"
+  japanese: "Mizuki"
+aws_polly:
+  text_type: "text"
+  output_format: "mp3"
+  sample_rate: "16000"
+  region: "us-west-2"
+speech_file:
+  name_prefix: "description_of_lesson%s"
+  speech_file_name: "description_of_lesson%s*.mp3"
